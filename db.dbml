@@ -1,0 +1,150 @@
+Project petshop {
+  database_type: 'PostgreSQL'
+  Note: '''
+    
+  '''
+}
+enum risk_status {
+    LOW
+    MEDIUM
+    HIGH
+}
+
+enum role {
+    USER
+    VET
+    ADMIN
+}
+
+enum sign_up_type{
+  EMAIL
+  SOCIAL
+}
+
+enum status {
+  ACTIVE
+  INACTIVE
+}
+
+enum breed_type {
+  SMALL
+  MEDIUM
+  LARGE
+}
+
+enum in_stock {
+  AVAILABLE
+  UNAVAILABLE
+}
+
+Table users as U {
+  id varchar(255) [pk, unique,note: 'uuid']
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp
+  status status
+  full_name varchar
+  avatar varchar
+  email varchar
+  auth_token varchar
+  device_token varchar
+  mobile_number varchar
+  country_code varchar
+  password varchar [note: 'encrypted']
+  is_mobile_verified boolean
+  is_email_verified boolean
+  is_tnc_accepted boolean
+  is_logged_in boolean
+  role role
+  sign_up_type sign_up_type
+  social_id varcha
+  note: "table 'users' contains user information"
+}
+
+Table admin as A {
+  id varchar(255) [pk, unique,note: 'uuid']
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp
+  status status
+  full_name varchar
+  email varchar
+  password varchar [note: 'encrypted']
+  role role
+}
+
+ Table product_ratings as TR{
+   id varchar(255) [pk, unique,note: 'uuid']
+   created_at timestamp
+   updated_at timestamp
+   deleted_at timestamp
+   status status
+   overall numeric
+   reviews numeric
+   average numeric
+   products [uuid]
+ }
+
+  Table brands as B {
+   id varchar(255) [pk, unique,note: 'uuid']
+   created_at timestamp
+   updated_at timestamp
+   deleted_at timestamp
+   status status
+   name varchar
+ }
+
+  Table product_categories as C {
+   id varchar(255) [pk, unique,note: 'uuid']
+   created_at timestamp
+   updated_at timestamp
+   deleted_at timestamp
+   status status
+   name varchar
+ }
+
+
+ Table pet_species {
+   id varchar(255) [pk, unique,note: 'uuid']
+   created_at timestamp   
+   updated_at timestamp
+   deleted_at timestamp
+   status status
+   name varchar
+ }
+
+Table products as P {
+  id varchar(255) [pk, unique,note: 'uuid']
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp
+  status status
+  name varchar
+  discount numeric
+  mrp numeric
+  selling_price numeric
+  breed_type breed_type
+  description longtext
+  is_on_sale boolean              
+  in_stock in_stock
+  category [uuid]
+  brands [uuid]
+  pet_species [uuid]
+}
+  
+ Table product_image{
+   id varchar(255) [pk, unique,note: 'uuid']
+   created_at timestamp
+   updated_at timestamp
+   deleted_at timestamp
+   status status
+   link varchar
+   products [uuid]
+ }
+
+Ref: product_ratings.products > products.id
+Ref: products.category > product_categories.id
+Ref: products.brands > brands.id
+Ref: products.pet_species > pet_species.id
+Ref: product_image.products > products.id
+

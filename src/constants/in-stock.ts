@@ -1,0 +1,4 @@
+export enum InStock{
+    AVAILABLE = 'AVAILABLE',
+    UNAVAILABLE = 'UNAVAILABLE'
+}
