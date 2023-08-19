@@ -149,5 +149,8 @@
         },
         "coverageDirectory": "<rootDir>/../coverage",
         "testEnvironment": "node"
+    },
+    "engines": {
+        "node": ">=14 <15"
     }
 }
