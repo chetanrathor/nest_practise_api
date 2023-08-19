@@ -6,7 +6,7 @@
     "author": "",
     "private": true,
     "scripts": {
-        "prebuild": "rimraf dist",
+        "prebuild": "rm -rf dist",
         "build": "nest build",
         "build:prod": "tsc -p tsconfig.build.json",
         "start": "nest start",
