@@ -19,5 +19,6 @@ export const dataSource = new DataSource({
     'src/modules/**/*.view-entity{.ts,.js}',
   ],
   migrations: ['src/database/migrations/*{.ts,.js}'],
-  
+  ssl: Boolean(process.env.DB_SSL)
+
 });

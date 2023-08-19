@@ -104,6 +104,7 @@ export class ApiConfigService {
       migrationsRun: true,
       logging: this.getBoolean('ENABLE_ORM_LOGS'),
       namingStrategy: new SnakeNamingStrategy(),
+      ssl: this.getBoolean('DB_SSL')
     };
   }
 
@@ -164,7 +165,7 @@ export class ApiConfigService {
     }
   }
 
-  get JwtConfiguration(){
-    return {expiresIn:this.getString('JWT_EXPIRE_IN'),secret:this.getString('JWT_SECRET')}
+  get JwtConfiguration() {
+    return { expiresIn: this.getString('JWT_EXPIRE_IN'), secret: this.getString('JWT_SECRET') }
   }
 }

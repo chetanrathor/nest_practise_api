@@ -1,7 +1,7 @@
 import { UserEntity } from '../../../modules/user/entities/user.entity';
 import { AbstractEntity } from '../../../shared/entity/abstract.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
-import { Consultation } from 'modules/consultation/entities/consultation.entity';
+import { Consultation } from '../../../modules/consultation/entities/consultation.entity';
 
 @Entity('appointments')
 export class Appointment extends AbstractEntity {
