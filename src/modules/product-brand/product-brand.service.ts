@@ -14,7 +14,7 @@ export class ProductBrandService {
     private readonly productBrandRepository: Repository<ProductBrand>,
   ) { }
 
-  async findAndCount(options: FindManyOptions<ProductBrand>): Promise<[ProductBrand[], number]> {
+  async findAndCount(options?: FindManyOptions<ProductBrand>): Promise<[ProductBrand[], number]> {
     return await this.productBrandRepository.findAndCount(options);
   }
 

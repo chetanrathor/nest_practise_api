@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Address } from 'cluster';
-import { FindManyOptions, FindOneOptions, FindOptionsWhere, Repository, UpdateResult } from 'typeorm';
+import { FindManyOptions, FindOneOptions, FindOptionsOrder, FindOptionsWhere, ILike, Repository, UpdateResult } from 'typeorm';
 
 import type { UserDto } from './dto/user.dto';
 import { UserEntity } from './entities/user.entity';
+import { GetUsersDTO } from './dto/get-users.dto';
+import { getSuccessResponse, processPagination } from 'utils';
 
 @Injectable()
 export class UserService {
@@ -38,7 +40,7 @@ export class UserService {
     return this.userRepository.update({ id: userId }, user);
   }
 
-  async findAndCount(options: FindManyOptions<UserEntity>): Promise<[UserEntity[], number]> {
+  async findAndCount(options?: FindManyOptions<UserEntity>): Promise<[UserEntity[], number]> {
     return await this.userRepository.findAndCount(options);
   }
 
@@ -62,6 +64,24 @@ export class UserService {
     return await this.userRepository.softDelete(criteria);
   }
 
+  async getUsers(getusersDto: GetUsersDTO) {
+    const { limit, offset, order, search, status, role } = getusersDto
+    const where: FindOptionsWhere<UserEntity> = {
+      status,
+    }
+    const orders: FindOptionsOrder<UserEntity> = {
+      createdAt: order
+    }
+    if (search) {
+      where.fullName = ILike(`%${search}`)
+    }
+    if (role) {
+      where.role = role
+    }
+    const { skip, take } = processPagination({ limit, offset })
+    const [data, totalCount] = await this.findAndCount({ where, order: orders, skip, take })
+    return getSuccessResponse({ response: { data, totalCount }, message: 'users fetch successfully.' })
+  }
 
-  
+
 }

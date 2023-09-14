@@ -15,7 +15,7 @@ export class BlogService {
     private readonly blogRepository: Repository<Blog>,
   ) { }
 
-  async findAndCount(options: FindManyOptions<Blog>): Promise<[Blog[], number]> {
+  async findAndCount(options?: FindManyOptions<Blog>): Promise<[Blog[], number]> {
     return await this.blogRepository.findAndCount(options);
   }
 

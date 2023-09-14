@@ -16,7 +16,7 @@ export class ConsultationController {
 
   @Get()
   findAll() {
-    return this.consultationService.findAll();
+    return this.consultationService.findAndCount();
   }
 
   @Get(':id')

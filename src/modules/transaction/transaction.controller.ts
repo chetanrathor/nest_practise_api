@@ -16,7 +16,7 @@ export class TransactionController {
 
   @Get()
   findAll() {
-    return this.transactionService.findAll();
+    return this.transactionService.findAndCount();
   }
 
   @Get(':id')

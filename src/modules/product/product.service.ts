@@ -23,7 +23,7 @@ export class ProductService {
     private readonly productImageService: ProductImageService
   ) { }
 
-  async findAndCount(options: FindManyOptions<Product>): Promise<[Product[], number]> {
+  async findAndCount(options?: FindManyOptions<Product>): Promise<[Product[], number]> {
     return await this.productRepository.findAndCount(options);
   }
 

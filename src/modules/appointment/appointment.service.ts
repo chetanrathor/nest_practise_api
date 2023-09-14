@@ -16,7 +16,7 @@ export class AppointmentService {
 
     ) { }
 
-    async findAndCount(options: FindManyOptions<Appointment>): Promise<[Appointment[], number]> {
+    async findAndCount(options?: FindManyOptions<Appointment>): Promise<[Appointment[], number]> {
         return await this.appointmentRepository.findAndCount(options);
     }
 

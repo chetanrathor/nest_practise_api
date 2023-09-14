@@ -12,10 +12,10 @@ export class AdminController {
   //   return this.adminService.create(createAdminDto);
   // }
 
-  // @Get()
-  // findAll() {
-  //   return this.adminService.findAll();
-  // }
+  @Get('dashboard')
+  findAll() {
+    return this.adminService.getDashboard();
+  }
 
   // @Get(':id')
   // findOne(@Param('id') id: string) {
