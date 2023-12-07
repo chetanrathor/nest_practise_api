@@ -1,15 +1,15 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsEnum, IsNumber, IsNumberString, IsOptional, IsString } from "class-validator";
 import { Order } from "../../constants";
 
 export class FilterDto {
     @ApiProperty()
-    @IsString()
-    limit: string
+    @IsNumberString()    
+    limit: number
 
     @ApiProperty()
-    @IsString()
-    offset: string
+    @IsNumberString()    
+    offset: number
 
     @ApiPropertyOptional()
     @IsOptional()

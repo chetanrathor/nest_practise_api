@@ -18,6 +18,7 @@ import { use } from 'passport';
 import { ForgetPasswordRequest } from './dto/forget-password.dto';
 import { AdminSignInRequest } from './dto/admin-signin.dto';
 import { AdminService } from 'modules/admin/admin.service';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class AuthService {
@@ -29,7 +30,8 @@ export class AuthService {
     private readonly unverifiedUserService: UnverifiedUsersService,
     private readonly apiConfigService: ApiConfigService,
     private userOtpService: UserOtpService,
-    private readonly adminService: AdminService
+    private readonly adminService: AdminService,
+    private readonly mailerService: MailerService
   ) { }
 
 
@@ -43,10 +45,12 @@ export class AuthService {
       const user = await this.unverifiedUserService.findOne({ where: { email } })
       if (user) {
         await this.unverifiedUserService.update({ email }, { ...signUpRequest, otp })
+        await this.sendOtpEmail({ otp: otp as unknown as string, to: user.email })
         return getSuccessResponse({ message: 'OTP Sent Successfully', response: {} })
 
       } else {
         await this.unverifiedUserService.save({ ...signUpRequest, otp })
+        await this.sendOtpEmail({ otp: otp as unknown as string, to: signUpRequest.email })
         return getSuccessResponse({ message: 'OTP Sent Successfully', response: {} })
 
       }
@@ -77,7 +81,8 @@ export class AuthService {
       const isOtpValid = await this.userOtpService.isOtpValid(email)
       if (isOtpValid === true) {
         const response = {
-          authToken: this.getJWT({ id: user.id, role: user.role })
+          authToken: this.getJWT({ id: user.id, role: user.role }),
+          user
         }
 
         const message = 'OTP Verification Successfull.'
@@ -95,7 +100,8 @@ export class AuthService {
         if (unverifiedUser.otp == otp) {
           const user = await this.userService.createUser({ ...unverifiedUser })
           const response = {
-            authToken: this.getJWT({ id: user.id, role: user.role })
+            authToken: this.getJWT({ id: user.id, role: user.role }),
+            user
           }
 
           const message = 'OTP Verification Successfull'
@@ -149,6 +155,15 @@ export class AuthService {
 
   temp(p: any) {
     return p
+  }
+
+  async sendOtpEmail(options: { to: string, otp: string }) {
+    return await this.mailerService.sendMail({
+      from: 'dev.chetan.rathor@gmail.com',
+      to: options.to,
+      subject: 'hello wordld',
+      text: `Your One Time PassWord Is ${options.otp}`,
+    })
   }
 
 }

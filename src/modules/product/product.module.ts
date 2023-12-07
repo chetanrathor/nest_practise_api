@@ -7,9 +7,16 @@ import { ProductBrandModule } from 'modules/product-brand/product-brand.module';
 import { ProductCategoryModule } from 'modules/product-category/product-category.module';
 import { PetSpeciesModule } from 'modules/pet-species/pet-species.module';
 import { ProductImageModule } from 'modules/product-image/product-image.module';
+import { CartModule } from 'modules/cart/cart.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Product]), ProductBrandModule, ProductCategoryModule, PetSpeciesModule, ProductImageModule],
+  imports: [TypeOrmModule.forFeature([Product]),
+    ProductBrandModule,
+    ProductCategoryModule,
+    PetSpeciesModule,
+    ProductImageModule,
+    CartModule
+  ],
   controllers: [ProductController],
   providers: [ProductService],
   exports: [ProductService]

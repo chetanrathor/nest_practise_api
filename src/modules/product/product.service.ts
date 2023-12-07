@@ -1,10 +1,19 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { NotFoundException } from '@nestjs/common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
+import { BreedType, InStock, Status } from '../../constants';
+import { Offers } from 'constants/offers';
+import { CartService } from 'modules/cart/cart.service';
+import { Cart } from 'modules/cart/entities/cart.entity';
+import { PetSpecy } from 'modules/pet-species/entities/pet-specy.entity';
 import { PetSpeciesService } from 'modules/pet-species/pet-species.service';
+import { ProductBrand } from 'modules/product-brand/entities/product-brand.entity';
 import { ProductBrandService } from 'modules/product-brand/product-brand.service';
+import { ProductCategory } from 'modules/product-category/entities/product-category.entity';
 import { ProductCategoryService } from 'modules/product-category/product-category.service';
+import { ProductImage } from 'modules/product-image/entities/product-image.entity';
 import { ProductImageService } from 'modules/product-image/product-image.service';
+import { ProductRating } from 'modules/product-rating/entities/product-rating.entity';
 import { Between, FindManyOptions, FindOneOptions, FindOptionsRelations, FindOptionsWhere, ILike, LessThan, MoreThan, Repository, UpdateResult } from 'typeorm';
 import { getSuccessResponse, isValidNumber, processPagination } from 'utils';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -20,7 +29,10 @@ export class ProductService {
     private readonly productBrandService: ProductBrandService,
     private readonly productCategoryService: ProductCategoryService,
     private readonly petSpeciesService: PetSpeciesService,
-    private readonly productImageService: ProductImageService
+    private readonly productImageService: ProductImageService,
+    private readonly cartService: CartService,
+
+
   ) { }
 
   async findAndCount(options?: FindManyOptions<Product>): Promise<[Product[], number]> {
@@ -70,8 +82,9 @@ export class ProductService {
   }
 
   async getAllAndCount(getProducts: GetProductsRequest) {
-    const { limit, offset, order, } = getProducts;
+    const { limit, offset, order, userId } = getProducts;
     const { skip, take } = processPagination({ limit, offset });
+    console.log('skip,take', skip, take)
     const where = this.processFilterForGetAllProducts(getProducts)
     const relations: FindOptionsRelations<Product> = {
       brand: true,
@@ -81,9 +94,28 @@ export class ProductService {
       productRating: true,
 
     }
+    let cartProductIds: string[] = []
+    if (userId) {
+      const [cartProducts] = await this.cartService.findAndCount({ select: { id: true, product: { id: true } }, where: { user: { id: userId } }, relations: { product: true } })
+      if (cartProducts.length) {
+        cartProductIds = cartProducts.map((item) => item.product.id)
+      }
+    }
+
+
     const [products, totalCount] = await this.findAndCount({ skip, take, order: { createdAt: order }, where, relations });
+    let productsMapped: { isAvailableInCart: boolean; name: string; discount: number; mrp: number; sellingPrice: number; breedType: BreedType; description: string; isOnSale: boolean; inStock: InStock; productRating: ProductRating; productImage: ProductImage[]; brand: ProductBrand; category: ProductCategory; specy: PetSpecy; cart: Cart[]; id: string; createdAt: Date; updatedAt: Date; deletedAt: Date; status: Status; }[] = []
+
+
+    productsMapped = products.map((item) => {
+      return {
+        ...item,
+        isAvailableInCart: cartProductIds.includes(item.id)
+      }
+    })
+
     const response = {
-      data: products,
+      data: productsMapped,
       totalCount,
     };
     return getSuccessResponse({ message: 'Products fetched successfully', response });
@@ -196,6 +228,45 @@ export class ProductService {
     }
 
     return product
+  }
+
+  mapProductLength(data: any[]) {
+    return data.map((item: any) => {
+      return {
+        ...item,
+        product: item.product.length
+      };
+    });
+  }
+
+  async getFiltersData() {
+    const select = { id: true, name: true, product: { id: true } }
+    let [[petSpecies], [brands], [categories], products] = await Promise.all([
+      this.petSpeciesService.findAndCount({ select, relations: { product: true } }),
+      this.productBrandService.findAndCount({ select, relations: { product: true } }),
+      this.productCategoryService.findAndCount({ select, relations: { product: true } }),
+      this.productRepository.createQueryBuilder('product').select('product.breed_type,COUNT(product.id)').groupBy('product.breed_type').getRawMany()
+    ])
+
+    products = products.map((item) => {
+      return {
+        id: item.breed_type,
+        name: item.breed_type,
+        product: parseInt(item.count) ?? 0
+
+      }
+    })
+
+
+
+
+
+    return {
+      petSpecies: this.mapProductLength(petSpecies),
+      brands: this.mapProductLength(brands),
+      categories: this.mapProductLength(categories),
+      breedTypes: products,
+    }
   }
 
 

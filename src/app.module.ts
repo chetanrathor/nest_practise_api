@@ -25,10 +25,26 @@ import { UserOtpModule } from './modules/user-otp/user-otp.module';
 import { UnverifiedUsersModule } from './modules/unverified-users/unverified-users.module';
 import { EmailModule } from './modules/email/email.module';
 import { AdminModule } from './modules/admin/admin.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { CartModule } from './modules/cart/cart.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
+    MailerModule.forRoot({
+      transport: {
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
+        auth: {
+          user: 'dev.chetan.rathor@gmail.com',
+          pass: 'laud nsre aapa mvil'
+        },
+        tls: {
+          rejectUnauthorized: false
+        },
+      }
+    })
+    , ConfigModule.forRoot({
       isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({
@@ -59,9 +75,10 @@ import { AdminModule } from './modules/admin/admin.module';
     UnverifiedUsersModule,
     EmailModule,
     AdminModule,
+    CartModule,
   ],
   providers: [],
   exports: [TypeOrmModule],
   controllers: [AppController],
 })
-export class AppModule {}
+export class AppModule { }

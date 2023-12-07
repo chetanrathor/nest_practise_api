@@ -7,12 +7,19 @@ import type { UserDto } from './dto/user.dto';
 import { UserEntity } from './entities/user.entity';
 import { GetUsersDTO } from './dto/get-users.dto';
 import { getSuccessResponse, processPagination } from 'utils';
+import { GetUsersConsultations, GetUsersOrders, GetUsersShippings } from './dto/get-users-profile.dto';
+import { AddressService } from 'modules/adress/adress.service';
+import { ConsultationService } from 'modules/consultation/consultation.service';
+import { OrderService } from 'modules/order/order.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    private readonly addressService: AddressService,
+    private readonly consultationService: ConsultationService,
+    private readonly orderService: OrderService
   ) { }
 
   async createUser(userInfo: Partial<UserEntity>) {
@@ -78,10 +85,30 @@ export class UserService {
     if (role) {
       where.role = role
     }
-    const { skip, take } = processPagination({ limit, offset })
-    const [data, totalCount] = await this.findAndCount({ where, order: orders, skip, take })
+
+    const [data, totalCount] = await this.findAndCount({ where, order: orders, skip: offset, take: limit })
     return getSuccessResponse({ response: { data, totalCount }, message: 'users fetch successfully.' })
   }
+
+  async getUserShippings(userId: string, getUsersShippings: GetUsersShippings) {
+    const { limit, offset, order } = getUsersShippings
+    const [shippings, count] = await this.addressService.findAndCount({ where: { user: { id: userId } }, skip: offset, take: limit })
+    return getSuccessResponse({ message: 'User Shippings', response: { shippings, count } })
+  }
+
+  async getUserOrders(userId: string, getUsersOrders: GetUsersOrders) {
+    const { limit, offset, order } = getUsersOrders
+    const [orders, count] = await this.orderService.findAndCount({ where: { user: { id: userId }, }, skip: offset, take: limit })
+    return getSuccessResponse({ message: 'User Orders', response: { orders, count } })
+  }
+
+  async getUserConsultations(userId: string, getUsersConsultations: GetUsersConsultations) {
+    const { limit, offset, order } = getUsersConsultations
+    const [consultations, count] = await this.consultationService.findAndCount({ where: { appointment: { user: { id: userId } } }, skip: offset, take: limit })
+    return getSuccessResponse({ message: 'User Consultations', response: { consultations, count } })
+  }
+
+
 
 
 }

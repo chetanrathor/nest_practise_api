@@ -6,6 +6,7 @@ import { ProductBrand } from "../../../modules/product-brand/entities/product-br
 import { ProductCategory } from "../../../modules/product-category/entities/product-category.entity";
 import { PetSpecy } from "../../../modules/pet-species/entities/pet-specy.entity";
 import { ProductImage } from "../../../modules/product-image/entities/product-image.entity";
+import { Cart } from "../../../modules/cart/entities/cart.entity";
 
 @Entity('products')
 export class Product extends AbstractEntity {
@@ -53,6 +54,9 @@ export class Product extends AbstractEntity {
     @ManyToOne((type) => PetSpecy, (specy) => specy.id)
     @JoinColumn({ name: 'specy' })
     specy: PetSpecy
+
+    @OneToMany((type) => Cart, (cart) => cart.product)
+    cart: Cart[]
 
 }
 

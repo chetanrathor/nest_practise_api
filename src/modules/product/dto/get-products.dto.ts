@@ -41,5 +41,10 @@ export class GetProductsRequest extends FilterDto {
     breedType: BreedType
 
 
+    @ApiPropertyOptional()
+    @IsOptional()
+    userId: string
+
+
 
 }

@@ -6,6 +6,7 @@ import { Appointment } from '../../../modules/appointment/entities/appointment.e
 import { Consultation } from '../../../modules/consultation/entities/consultation.entity';
 import { Order } from '../../../modules/order/entities/order.entity';
 import { Transaction } from '../../../modules/transaction/entities/transaction.entity';
+import { Cart } from '../../../modules/cart/entities/cart.entity';
 
 @Entity({ name: 'users' })
 export class UserEntity extends AbstractEntity {
@@ -67,5 +68,10 @@ export class UserEntity extends AbstractEntity {
 
   @OneToMany((type) => Transaction, (transaction) => transaction.user)
   transactions: Transaction[]
+
+  @OneToMany((type) => Cart, (cart) => cart.user)
+  cart: Cart[]
+
+ 
 
 }

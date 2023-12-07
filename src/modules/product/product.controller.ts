@@ -5,6 +5,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { GetProductsRequest } from './dto/get-products.dto';
 import { Query } from '@nestjs/common/decorators';
+import { getSuccessResponse } from 'utils';
 
 @ApiTags('product')
 @Controller('product')
@@ -17,13 +18,23 @@ export class ProductController {
   }
 
   @Get()
-  findAll(@Query() getProducts: GetProductsRequest) {
-    return this.productService.getAllAndCount(getProducts);
+  async findAll(@Query() getProducts: GetProductsRequest) {
+    return await this.productService.getAllAndCount(getProducts);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.productService.getOne(id);
+  }
+
+  @Get('filters')
+  async getFiltersData() {
+    try {
+      const response = await this.productService.getFiltersData();
+      return getSuccessResponse({ message: 'Filters Data', response })
+    } catch (error:any) {
+      throw new Error(error)
+    }
   }
 
   @Patch(':id')

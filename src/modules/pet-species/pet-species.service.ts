@@ -1,6 +1,6 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOneOptions, FindOptionsWhere, ILike, Repository, UpdateResult } from 'typeorm';
+import { FindManyOptions, FindOneOptions, FindOptionsWhere, ILike, QueryRunner, Repository, UpdateResult } from 'typeorm';
 import { getSuccessResponse, processPagination } from 'utils';
 import { CreatePetSpecyDto } from './dto/create-pet-specy.dto';
 import { GetPetSpeciesRequest } from './dto/get-pet-species.dto';

@@ -32,16 +32,16 @@ export function isValidNumber(str: string): boolean {
 }
 
 
-export function processPagination(options: { limit: string, offset: string }) {
+export function processPagination(options: { limit: number, offset: number }) {
   const { limit, offset } = options
-  if (isValidNumber(limit) === false) {
+  // if (isValidNumber(limit) === false) {
 
-    throw new BadRequestException('limit is not a valid number')
-  }
+  //   throw new BadRequestException('limit is not a valid number')
+  // }
 
-  if (isValidNumber(offset) === false) {
-    throw new BadRequestException('offset is not a valid number')
-  }
+  // if (isValidNumber(offset) === false) {
+  //   throw new BadRequestException('offset is not a valid number')
+  // }
 
-  return { take: Number(limit), skip: Number(offset) }
+  return { take:limit, skip: offset }
 }
