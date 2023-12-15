@@ -1,6 +1,6 @@
 import { UserEntity } from '../../../modules/user/entities/user.entity';
 import { AbstractEntity } from '../../../shared/entity/abstract.entity';
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { PaymentType } from '../../../constants';
 import { OrderItem } from '../../order-item/entities/order-item.entity';
 
@@ -18,6 +18,7 @@ export class Order extends AbstractEntity {
     paymentType: PaymentType;
 
     @ManyToOne(() => UserEntity, user => user.id)
+    @JoinColumn({name:'user_id'})
     user: UserEntity;
 
     @OneToMany(() => OrderItem, orderItem => orderItem.order)

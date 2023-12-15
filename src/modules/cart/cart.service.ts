@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, Repository } from 'typeorm';
+import { FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { CreateCartDto } from './dto/create-cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
 import { Cart } from './entities/cart.entity';
@@ -31,12 +31,12 @@ export class CartService {
 
   async findAll(payload: { userId: string }) {
     const { userId } = payload
-    const [cartItems, count] = await  this.findAndCount({ where: { user: { id: userId } }, relations: { product: true } })
+    const [cartItems, count] = await this.findAndCount({ where: { user: { id: userId } }, relations: { product: true }, order: { createdAt: 'desc' } })
     let subTotalBeforDelivery = 0
     for (const item of cartItems) {
       subTotalBeforDelivery += item.quantity * item.product.mrp
     }
-    return { data:cartItems, count, subTotalBeforDelivery }
+    return { data: cartItems, count, subTotalBeforDelivery }
 
   }
 
@@ -49,7 +49,7 @@ export class CartService {
     return await this.cartRepository.update({ id }, { quantity })
   }
 
-  async remove(id: string) {
-    return await this.cartRepository.delete({ id })
+  async remove(criteria:FindOptionsWhere<Cart>) {
+    return await this.cartRepository.delete(criteria)
   }
 }

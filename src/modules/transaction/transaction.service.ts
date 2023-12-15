@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, Repository } from 'typeorm';
+import { DeepPartial, FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { Transaction } from './entities/transaction.entity';
@@ -12,8 +12,8 @@ export class TransactionService {
     @InjectRepository(Transaction)
     private readonly transactionRepository: Repository<Transaction>,
   ) { }
-  create(createTransactionDto: CreateTransactionDto) {
-    return 'This action adds a new transaction';
+  async create(createTransactionDto: DeepPartial<Transaction>) {
+    return await this.transactionRepository.save(createTransactionDto)
   }
 
   async findAndCount(options?: FindManyOptions<Transaction>) {
@@ -24,8 +24,8 @@ export class TransactionService {
     return `This action returns a #${id} transaction`;
   }
 
-  update(id: number, updateTransactionDto: UpdateTransactionDto) {
-    return `This action updates a #${id} transaction`;
+  async update(option:FindOptionsWhere<Transaction>,data:DeepPartial<Transaction>) {
+    return await this.transactionRepository.update(option, data)
   }
 
   remove(id: number) {

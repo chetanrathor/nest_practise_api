@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { getSuccessResponse } from 'utils';
 import { AddressService } from './adress.service';
 import { CreateAdressDto } from './dto/create-adress.dto';
 import { UpdateAdressDto } from './dto/update-adress.dto';
@@ -7,28 +8,46 @@ import { UpdateAdressDto } from './dto/update-adress.dto';
 export class AdressController {
   constructor(private readonly adressService: AddressService) { }
 
-  // @Post()
-  // create(@Body() createAdressDto: CreateAdressDto) {
-  //   // return this.adressService.create(createAdressDto);
-  // }
+  @Post()
+  async create(@Body() createAdressDto: CreateAdressDto) {
+    try {
+
+      const address = await this.adressService.createAddress(createAdressDto);
+      return getSuccessResponse({ message: 'Address added', response: { address } })
+    } catch (error: any) {
+      throw new Error(error)
+    }
+  }
 
   // @Get()
   // findAll() {
   //   return this.adressService.findAll();
   // }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.adressService.findOne(+id);
-  // }
+  @Get(':userId')
+  async findAll(@Param('userId') id: string) {
+    try {
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateAdressDto: UpdateAdressDto) {
-  //   return this.adressService.update(+id, updateAdressDto);
-  // }
+      const data = await this.adressService.getAllUserAddress(id);
+      return getSuccessResponse({ message: 'user address found', response: { data } })
+    } catch (error) {
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.adressService.remove(+id);
-  // }
+    }
+  }
+
+  @Patch(':id')
+  async update(@Param('id') id: string, @Body() updateAdressDto: UpdateAdressDto) {
+    try {
+      
+      const response = await this.adressService.updateDefaultAddress(id, updateAdressDto);
+      return getSuccessResponse({ message: 'Address Updated Successfully', response })
+    } catch (error: any) {
+      throw new Error(error)
+    }
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.adressService.remove(+id);
+  }
 }

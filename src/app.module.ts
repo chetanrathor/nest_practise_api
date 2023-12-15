@@ -27,6 +27,8 @@ import { EmailModule } from './modules/email/email.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { CartModule } from './modules/cart/cart.module';
+import { StripeModule } from './modules/stripe/stripe.module';
+import { WebhookModule } from './modules/webhook/webhook.module';
 
 @Module({
   imports: [
@@ -76,6 +78,8 @@ import { CartModule } from './modules/cart/cart.module';
     EmailModule,
     AdminModule,
     CartModule,
+    StripeModule,
+    WebhookModule,
   ],
   providers: [],
   exports: [TypeOrmModule],

@@ -65,6 +65,8 @@ export async function bootstrap() {
     }),
   );
 
+  
+
   if (process.env.SWAGGER_ENABLE && process.env.SWAGGER_ENABLE === 'true') {
     setupSwagger(app);
   }
