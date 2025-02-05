@@ -39,7 +39,7 @@ import { WebhookModule } from './modules/webhook/webhook.module';
         secure: false,
         auth: {
           user: 'dev.chetan.rathor@gmail.com',
-          pass: 'laud nsre aapa mvil'
+          pass: 'lxlu maum jhdm nbud'
         },
         tls: {
           rejectUnauthorized: false
